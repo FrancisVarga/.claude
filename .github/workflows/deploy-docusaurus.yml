@@ -1,0 +1,173 @@
+name: Deploy Docusaurus to GitHub Pages
+
+on:
+  # Runs on pushes to any branch
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'gutenberg/**'
+      - '.github/workflows/deploy-docusaurus.yml'
+      - '.github/actions/**'
+  # Allows manual trigger
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: false
+        default: ''
+
+# Sets permissions for deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Prevent concurrent deployments for same branch
+concurrency:
+  group: "pages-${{ github.ref }}"
+  cancel-in-progress: false
+
+env:
+  GITHUB_PAGES_URL: https://${{ github.repository_owner }}.github.io
+
+jobs:
+  # Build job
+  build:
+    name: Build Docusaurus
+    runs-on: ubuntu-latest
+    outputs:
+      branch-name: ${{ steps.setup.outputs.branch-name }}
+      safe-branch-name: ${{ steps.setup.outputs.safe-branch-name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Fetch all history for all branches and tags
+          fetch-depth: 0
+          # Initialize and update submodules
+          submodules: recursive
+
+      - name: Setup Docusaurus
+        id: setup
+        uses: ./.github/actions/setup-docusaurus
+
+      - name: Configure Docusaurus
+        uses: ./.github/actions/configure-docusaurus
+        with:
+          branch-name: ${{ steps.setup.outputs.branch-name }}
+          safe-branch-name: ${{ steps.setup.outputs.safe-branch-name }}
+          github-repository: ${{ github.repository }}
+          github-pages-url: ${{ env.GITHUB_PAGES_URL }}
+
+      - name: Build Docusaurus
+        id: build
+        uses: ./.github/actions/build-docusaurus
+
+      - name: Prepare deployment
+        uses: ./.github/actions/prepare-deployment
+        with:
+          branch-name: ${{ steps.setup.outputs.branch-name }}
+          safe-branch-name: ${{ steps.setup.outputs.safe-branch-name }}
+          build-directory: ${{ steps.build.outputs.build-directory }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  # Deploy job
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Update deployment status
+  update-status:
+    name: Update deployment status
+    runs-on: ubuntu-latest
+    needs: [build, deploy]
+    if: always()
+    steps:
+      - name: Create deployment status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = '${{ needs.build.outputs.branch-name }}';
+            const safeBranchName = '${{ needs.build.outputs.safe-branch-name }}';
+            const repoName = context.repo.repo;
+            const baseUrl = branchName === 'main' || branchName === 'master'
+              ? `${context.payload.repository.name}`
+              : `${context.payload.repository.name}/${safeBranchName}`;
+            const deploymentUrl = `${{ env.GITHUB_PAGES_URL }}/${baseUrl}/`;
+            
+            // Create deployment status
+            const deployment = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: `github-pages-${safeBranchName}`,
+              description: `Docusaurus deployment for ${branchName}`,
+              auto_merge: false,
+              required_contexts: []
+            });
+            
+            if (deployment.status === 201) {
+              await github.rest.repos.createDeploymentStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                deployment_id: deployment.data.id,
+                state: 'success',
+                environment_url: deploymentUrl,
+                description: 'Deployment completed successfully'
+              });
+            }
+            
+            console.log(`Deployment URL: ${deploymentUrl}`);
+
+  # Comment on PR
+  comment-pr:
+    name: Comment on PR
+    runs-on: ubuntu-latest
+    needs: [build, deploy]
+    if: github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Find PR comment
+        uses: peter-evans/find-comment@v2
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '📚 Documentation Preview'
+
+      - name: Create or update PR comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## 📚 Documentation Preview
+            
+            The documentation for this PR has been deployed!
+            
+            🔗 **Preview URL**: ${{ env.GITHUB_PAGES_URL }}/${{ github.event.repository.name }}/${{ needs.build.outputs.safe-branch-name }}/
+            
+            | Detail | Value |
+            |--------|-------|
+            | Branch | `${{ needs.build.outputs.branch-name }}` |
+            | Commit | ${{ github.sha }} |
+            | Build | [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+            | Status | ✅ Deployed |
+            
+            ---
+            <sub>This preview will be automatically updated when you push new commits.</sub>
+          edit-mode: replace

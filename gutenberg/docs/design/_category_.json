@@ -1,0 +1,8 @@
+{
+  "label": "🏗️ Design",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Architectural decisions and design principles."
+  }
+}

@@ -1,0 +1,66 @@
+name: 'Configure Docusaurus URLs'
+description: 'Configure Docusaurus base URL and site URL for GitHub Pages deployment'
+inputs:
+  branch-name:
+    description: 'Branch name'
+    required: true
+  safe-branch-name:
+    description: 'URL-safe branch name'
+    required: true
+  working-directory:
+    description: 'Working directory for Docusaurus'
+    required: false
+    default: './gutenberg'
+  github-repository:
+    description: 'GitHub repository (owner/repo)'
+    required: true
+  github-pages-url:
+    description: 'Base GitHub Pages URL'
+    required: true
+outputs:
+  base-url:
+    description: 'Configured base URL'
+    value: ${{ steps.config.outputs.base_url }}
+  site-url:
+    description: 'Configured site URL'
+    value: ${{ steps.config.outputs.site_url }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure URLs
+      id: config
+      shell: bash
+      run: |
+        # Extract repository name
+        REPO_NAME=$(echo "${{ inputs.github-repository }}" | cut -d'/' -f2)
+        
+        # Determine base URL and site URL based on branch
+        if [ "${{ inputs.branch-name }}" = "main" ] || [ "${{ inputs.branch-name }}" = "master" ]; then
+          BASE_URL="/$REPO_NAME/"
+          SITE_URL="${{ inputs.github-pages-url }}/$REPO_NAME"
+        else
+          BASE_URL="/$REPO_NAME/${{ inputs.safe-branch-name }}/"
+          SITE_URL="${{ inputs.github-pages-url }}/$REPO_NAME/${{ inputs.safe-branch-name }}"
+        fi
+        
+        echo "base_url=$BASE_URL" >> $GITHUB_OUTPUT
+        echo "site_url=$SITE_URL" >> $GITHUB_OUTPUT
+        
+        # Update docusaurus.config.ts
+        cd "${{ inputs.working-directory }}"
+        
+        # Backup original config
+        cp docusaurus.config.ts docusaurus.config.ts.bak
+        
+        # Update baseUrl and url
+        sed -i "s|baseUrl: '[^']*'|baseUrl: '$BASE_URL'|g" docusaurus.config.ts
+        sed -i "s|url: '[^']*'|url: '$SITE_URL'|g" docusaurus.config.ts
+        
+        # Show the changes
+        echo "=== Configuration Changes ==="
+        diff docusaurus.config.ts.bak docusaurus.config.ts || true
+        echo "============================"
+        
+        echo "Configured:"
+        echo "  Base URL: $BASE_URL"
+        echo "  Site URL: $SITE_URL"

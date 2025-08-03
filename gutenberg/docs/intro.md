@@ -152,21 +152,22 @@ To start using the Workflow Creator Agent:
 ## Support and Resources
 
 - **GitHub Repository**: [workflow-creator](https://github.com/your-org/workflow-creator)
-- **API Documentation**: [API Reference](./api-reference.md)
+- **Implementation Guide**: [Workflow Creator Agent](./implementation/workflow-creator-agent.md)
+- **Integration Documentation**: [Integration Guide](./implementation/integration.md)
 - **Community Forum**: [Discussions](https://github.com/your-org/workflow-creator/discussions)
 - **Issue Tracker**: [Report Issues](https://github.com/your-org/workflow-creator/issues)
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guide](./contributing.md) for details on:
-- Code of Conduct
-- Development Setup
-- Submission Process
-- Coding Standards
+We welcome contributions! Please see our [Best Practices Guide](./best-practices/workflow-design.md) for details on:
+- Workflow Design Principles
+- Error Handling Strategies
+- Performance Optimization
+- Common Anti-patterns to Avoid
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License. For more information about the project structure and implementation details, see our [Architecture Overview](./design/architecture.md).
 
 ---
 

@@ -5,8 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'Workflow Creator Documentation',
+  tagline: 'Multi-Agent Workflow Orchestration System',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -73,21 +73,58 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Workflow Creator',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Workflow Creator Logo',
         src: 'img/logo.svg',
       },
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'workflowSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Documentation',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          type: 'dropdown',
+          label: 'Guides',
+          position: 'left',
+          items: [
+            {
+              label: 'Context Guide',
+              to: '/docs/context-guide/overview',
+            },
+            {
+              label: 'Best Practices',
+              to: '/docs/best-practices/workflow-design',
+            },
+            {
+              label: 'Templates',
+              to: '/docs/templates/quick-start',
+            },
+          ],
+        },
+        {
+          type: 'dropdown',
+          label: 'Examples',
+          position: 'left',
+          items: [
+            {
+              label: 'E-commerce Workflow',
+              to: '/docs/examples/e-commerce-workflow',
+            },
+            {
+              label: 'Data Pipeline',
+              to: '/docs/examples/data-pipeline-workflow',
+            },
+            {
+              label: 'Incident Response',
+              to: '/docs/examples/incident-response-workflow',
+            },
+          ],
+        },
+        {
+          href: 'https://github.com/your-org/workflow-creator',
           label: 'GitHub',
           position: 'right',
         },
@@ -97,11 +134,36 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Documentation',
           items: [
             {
-              label: 'Tutorial',
+              label: 'Getting Started',
               to: '/docs/intro',
+            },
+            {
+              label: 'Context Guide',
+              to: '/docs/context-guide/overview',
+            },
+            {
+              label: 'Best Practices',
+              to: '/docs/best-practices/workflow-design',
+            },
+          ],
+        },
+        {
+          title: 'Resources',
+          items: [
+            {
+              label: 'Templates',
+              to: '/docs/templates/quick-start',
+            },
+            {
+              label: 'Examples',
+              to: '/docs/examples/e-commerce-workflow',
+            },
+            {
+              label: 'Patterns',
+              to: '/docs/patterns/sequential-workflows',
             },
           ],
         },
@@ -109,34 +171,17 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/your-org/workflow-creator',
+            },
+            {
+              label: 'Issues',
+              href: 'https://github.com/your-org/workflow-creator/issues',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Workflow Creator Project. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

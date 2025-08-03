@@ -1,0 +1,64 @@
+name: 'Prepare Deployment'
+description: 'Prepare files for GitHub Pages deployment'
+inputs:
+  branch-name:
+    description: 'Branch name'
+    required: true
+  safe-branch-name:
+    description: 'URL-safe branch name'
+    required: true
+  build-directory:
+    description: 'Directory containing built files'
+    required: true
+  deployment-directory:
+    description: 'Directory to prepare for deployment'
+    required: false
+    default: '_site'
+  create-index:
+    description: 'Create branch index page'
+    required: false
+    default: 'true'
+runs:
+  using: 'composite'
+  steps:
+    - name: Prepare deployment structure
+      shell: bash
+      run: |
+        # Clean and create deployment directory
+        rm -rf "${{ inputs.deployment-directory }}"
+        mkdir -p "${{ inputs.deployment-directory }}"
+        
+        # For main/master branch, copy directly
+        # For other branches, copy to subdirectory
+        if [ "${{ inputs.branch-name }}" = "main" ] || [ "${{ inputs.branch-name }}" = "master" ]; then
+          echo "Deploying main branch to root..."
+          cp -r "${{ inputs.build-directory }}"/* "${{ inputs.deployment-directory }}/"
+        else
+          echo "Deploying branch '${{ inputs.branch-name }}' to subdirectory..."
+          mkdir -p "${{ inputs.deployment-directory }}/${{ inputs.safe-branch-name }}"
+          cp -r "${{ inputs.build-directory }}"/* "${{ inputs.deployment-directory }}/${{ inputs.safe-branch-name }}/"
+        fi
+        
+        # Show deployment structure
+        echo "=== Deployment Structure ==="
+        find "${{ inputs.deployment-directory }}" -type d -name "*.map" -prune -o -type d -print | head -20
+        echo "==========================="
+
+    - name: Create branch index
+      if: inputs.create-index == 'true' && inputs.branch-name != 'main' && inputs.branch-name != 'master'
+      shell: bash
+      run: |
+        cat > "${{ inputs.deployment-directory }}/branches.json" << EOF
+        {
+          "currentBranch": "${{ inputs.branch-name }}",
+          "safeBranchName": "${{ inputs.safe-branch-name }}",
+          "deploymentTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+          "buildInfo": {
+            "workflow": "${{ github.workflow }}",
+            "run": "${{ github.run_number }}",
+            "sha": "${{ github.sha }}"
+          }
+        }
+        EOF
+        
+        echo "Created branch metadata file"

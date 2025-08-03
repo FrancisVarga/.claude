@@ -1,0 +1,256 @@
+name: Update Branch Index
+
+on:
+  # Run after successful deployment
+  workflow_run:
+    workflows: ["Deploy Docusaurus to GitHub Pages"]
+    types:
+      - completed
+  # Manual trigger to rebuild index
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-index:
+    name: Update branch index page
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Create index generator script
+        run: |
+          cat > generate-index.js << 'EOF'
+          const fs = require('fs');
+          
+          // Get all branches from git
+          const { execSync } = require('child_process');
+          
+          // Fetch all remote branches
+          execSync('git fetch --all', { stdio: 'inherit' });
+          
+          // Get all branches
+          const branches = execSync('git branch -r')
+            .toString()
+            .split('\n')
+            .map(b => b.trim())
+            .filter(b => b && !b.includes('HEAD'))
+            .map(b => b.replace('origin/', ''))
+            .filter(b => !b.includes('gh-pages')); // Exclude gh-pages branch
+          
+          // Generate index HTML
+          const indexHtml = `<!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Documentation Branches</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                      line-height: 1.6;
+                      color: #333;
+                      background: #f5f6fa;
+                  }
+                  .header {
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      color: white;
+                      padding: 3rem 0;
+                      text-align: center;
+                      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                  }
+                  .header h1 {
+                      font-size: 2.5rem;
+                      margin-bottom: 0.5rem;
+                  }
+                  .header p {
+                      font-size: 1.1rem;
+                      opacity: 0.9;
+                  }
+                  .container {
+                      max-width: 1200px;
+                      margin: 0 auto;
+                      padding: 2rem;
+                  }
+                  .search-box {
+                      width: 100%;
+                      padding: 1rem;
+                      font-size: 1rem;
+                      border: 2px solid #e0e0e0;
+                      border-radius: 8px;
+                      margin-bottom: 2rem;
+                  }
+                  .search-box:focus {
+                      outline: none;
+                      border-color: #667eea;
+                  }
+                  .branches-grid {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+                      gap: 1.5rem;
+                  }
+                  .branch-card {
+                      background: white;
+                      border-radius: 8px;
+                      padding: 1.5rem;
+                      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                      transition: all 0.3s ease;
+                      border-top: 4px solid #718096;
+                  }
+                  .branch-card:hover {
+                      transform: translateY(-2px);
+                      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+                  }
+                  .branch-card.main {
+                      border-top-color: #667eea;
+                  }
+                  .branch-card.feature {
+                      border-top-color: #48bb78;
+                  }
+                  .branch-card.develop {
+                      border-top-color: #ed8936;
+                  }
+                  .branch-name {
+                      font-size: 1.25rem;
+                      font-weight: 600;
+                      margin-bottom: 0.5rem;
+                      color: #2d3748;
+                  }
+                  .branch-link {
+                      text-decoration: none;
+                      color: inherit;
+                  }
+                  .branch-type {
+                      display: inline-block;
+                      padding: 0.25rem 0.75rem;
+                      background: #e2e8f0;
+                      color: #4a5568;
+                      font-size: 0.875rem;
+                      border-radius: 4px;
+                      margin-bottom: 1rem;
+                  }
+                  .view-docs-btn {
+                      display: inline-block;
+                      margin-top: 1rem;
+                      padding: 0.75rem 1.5rem;
+                      background: #667eea;
+                      color: white;
+                      text-decoration: none;
+                      border-radius: 6px;
+                      font-weight: 500;
+                      transition: background 0.2s;
+                  }
+                  .view-docs-btn:hover {
+                      background: #5a67d8;
+                  }
+                  .no-results {
+                      text-align: center;
+                      padding: 3rem;
+                      color: #718096;
+                  }
+                  .footer {
+                      text-align: center;
+                      padding: 2rem;
+                      color: #718096;
+                      font-size: 0.875rem;
+                      margin-top: 3rem;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="header">
+                  <h1>📚 Documentation Hub</h1>
+                  <p>Browse documentation for all branches</p>
+              </div>
+              
+              <div class="container">
+                  <input type="text" 
+                         class="search-box" 
+                         placeholder="Search branches..." 
+                         id="searchBox"
+                         autocomplete="off">
+                  
+                  <div class="branches-grid" id="branchesGrid">
+                      ${branches.map(branch => {
+                          const safeBranchName = branch.replace(/[^a-zA-Z0-9._-]/g, '-').replace(/--+/g, '-');
+                          const isMain = branch === 'main' || branch === 'master';
+                          const branchType = isMain ? 'main' : 
+                                           branch.includes('feature/') ? 'feature' : 
+                                           branch.includes('develop') ? 'develop' : 'other';
+                          const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'repo';
+                          const path = isMain ? \`/\${repoName}/\` : \`/\${repoName}/\${safeBranchName}/\`;
+                          
+                          return \`
+                          <div class="branch-card \${branchType}" data-branch="\${branch}">
+                              <a href="\${path}" class="branch-link">
+                                  <h3 class="branch-name">\${branch}</h3>
+                              </a>
+                              <span class="branch-type">\${branchType}</span>
+                              <a href="\${path}" class="view-docs-btn">View Documentation →</a>
+                          </div>\`;
+                      }).join('')}
+                  </div>
+                  
+                  <div class="no-results" id="noResults" style="display: none;">
+                      <p>No branches found matching your search.</p>
+                  </div>
+              </div>
+              
+              <div class="footer">
+                  <p>Last updated: ${new Date().toLocaleString()}</p>
+                  <p>Total branches: ${branches.length}</p>
+              </div>
+              
+              <script>
+                  const searchBox = document.getElementById('searchBox');
+                  const grid = document.getElementById('branchesGrid');
+                  const noResults = document.getElementById('noResults');
+                  const cards = document.querySelectorAll('.branch-card');
+                  
+                  searchBox.addEventListener('input', (e) => {
+                      const searchTerm = e.target.value.toLowerCase();
+                      let hasResults = false;
+                      
+                      cards.forEach(card => {
+                          const branchName = card.dataset.branch.toLowerCase();
+                          if (branchName.includes(searchTerm)) {
+                              card.style.display = 'block';
+                              hasResults = true;
+                          } else {
+                              card.style.display = 'none';
+                          }
+                      });
+                      
+                      noResults.style.display = hasResults ? 'none' : 'block';
+                  });
+              </script>
+          </body>
+          </html>`;
+          
+          // Write the index file
+          fs.writeFileSync('branch-index.html', indexHtml);
+          console.log('Generated branch index with', branches.length, 'branches');
+          EOF
+
+      - name: Generate branch index
+        run: |
+          GITHUB_REPOSITORY=${{ github.repository }} node generate-index.js
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload branch index
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: branch-index.html
+
+      - name: Deploy index page
+        uses: actions/deploy-pages@v4

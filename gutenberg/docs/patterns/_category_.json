@@ -1,0 +1,8 @@
+{
+  "label": "🔄 Patterns",
+  "position": 5,
+  "link": {
+    "type": "generated-index",
+    "description": "Workflow coordination patterns and execution strategies."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(claude mcp add memory npx:*)",
+      "Bash(claude mcp add memory:*)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp:*)",
+      "mcp__memory__create_entities",
+      "mcp__memory__create_relations",
+      "mcp__memory__read_graph"
+    ],
+    "deny": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "memory",
+    "context7",
+    "puppeteer",
+    "github"
+  ]
+}

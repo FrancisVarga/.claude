@@ -1,0 +1,39 @@
+name: 'Build Docusaurus'
+description: 'Build Docusaurus site for production'
+inputs:
+  working-directory:
+    description: 'Working directory for Docusaurus'
+    required: false
+    default: './gutenberg'
+  build-command:
+    description: 'Build command to run'
+    required: false
+    default: 'npm run build'
+outputs:
+  build-directory:
+    description: 'Path to built files'
+    value: ${{ inputs.working-directory }}/build
+runs:
+  using: 'composite'
+  steps:
+    - name: Build Docusaurus
+      shell: bash
+      run: |
+        echo "Building Docusaurus site..."
+        ${{ inputs.build-command }}
+        echo "Build complete!"
+        
+        # Verify build output
+        if [ -d "build" ]; then
+          echo "Build directory contents:"
+          ls -la build/
+        else
+          echo "ERROR: Build directory not found!"
+          exit 1
+        fi
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        # Disable telemetry during build
+        DOCUSAURUS_TELEMETRY: false
+        # Production build
+        NODE_ENV: production

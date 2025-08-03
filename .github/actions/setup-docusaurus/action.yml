@@ -1,0 +1,50 @@
+name: 'Setup Docusaurus'
+description: 'Setup Node.js and install Docusaurus dependencies'
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '18'
+  working-directory:
+    description: 'Working directory for Docusaurus'
+    required: false
+    default: './gutenberg'
+outputs:
+  branch-name:
+    description: 'Current branch name'
+    value: ${{ steps.branch.outputs.name }}
+  safe-branch-name:
+    description: 'URL-safe branch name'
+    value: ${{ steps.branch.outputs.safe_name }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'npm'
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+      working-directory: ${{ inputs.working-directory }}
+
+    - name: Get branch information
+      id: branch
+      shell: bash
+      run: |
+        # Get branch name from ref
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          BRANCH_NAME="${{ github.head_ref }}"
+        else
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+        fi
+        
+        # Make branch name URL-safe
+        SAFE_BRANCH_NAME=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9._-]/-/g' | sed 's/--*/-/g')
+        
+        echo "name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        echo "safe_name=$SAFE_BRANCH_NAME" >> $GITHUB_OUTPUT
+        echo "Branch: $BRANCH_NAME (safe: $SAFE_BRANCH_NAME)"

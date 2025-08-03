@@ -172,7 +172,7 @@ export interface UserRepository {
 See: `/core/use-cases/create-order.use-case.ts`
 - Inject dependencies via constructor
 - Single public execute method
-- Return Result<T> type for error handling
+- Return Result&lt;T&gt; type for error handling
 
 ### Error Handling
 See: `/lib/errors/app-error.ts`

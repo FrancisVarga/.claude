@@ -1,0 +1,8 @@
+{
+  "label": "🚀 Examples",
+  "position": 8,
+  "link": {
+    "type": "generated-index",
+    "description": "Real-world workflow examples and implementation cases."
+  }
+}
