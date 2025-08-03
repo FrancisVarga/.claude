@@ -1,0 +1,6 @@
+[submodule "commands"]
+	path = commands
+	url = https://github.com/Wolfschanze-Berlin/claude-code-commands
+[submodule "agents"]
+	path = agents
+	url = https://github.com/Wolfschanze-Berlin/claude-code-agents

@@ -1,0 +1,130 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.sublime-*
+
+# Git submodule working directory changes
+# Note: .gitmodules should be tracked
+
+# Claude-specific files
+.credentials.json
+# settings.json
+
+# IDE locks and temporary files
+ide/*.lock
+ide/temp/
+ide/cache/
+
+# Project-specific workspace data
+projects/*/
+shell-snapshots/
+statsig/
+todos/
+
+# Docusaurus
+gutenberg/node_modules/
+gutenberg/.docusaurus/
+gutenberg/build/
+gutenberg/.cache/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+logs/
+temp/
+tmp/
+
+# Build artifacts
+dist/
+build/
+out/
+target/
+
+# Dependencies
+node_modules/
+venv/
+env/
+.env
+.venv/
+gutenberg/node_modules/
+
+# Node.js and npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+
+# Compiled files
+*.pyc
+*.pyo
+__pycache__/
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Cache directories
+.cache/
+.sass-cache/
+.pytest_cache/
+.coverage
+.nyc_output/
+
+# Package manager files
+package-lock.json
+yarn.lock
+Pipfile.lock
+poetry.lock
+gutenberg/package-lock.json
+
+# TypeScript
+*.tsbuildinfo
+.tscache/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Security and sensitive files
+*.key
+*.pem
+*.p12
+*.pfx
+api-keys.txt
+secrets.txt
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Documentation build outputs
+docs/_build/
+site/
