@@ -5,8 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Workflow Creator Documentation',
-  tagline: 'Multi-Agent Workflow Orchestration System',
+  title: 'Claude Code Documentation',
+  tagline: 'Enhanced Development Environment with AI-Powered Tools',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -72,10 +72,15 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
+    colorMode: {
+      defaultMode: 'dark',
+      disableSwitch: false,
+      respectPrefersColorScheme: false,
+    },
     navbar: {
-      title: 'Workflow Creator',
+      title: 'Claude Code',
       logo: {
-        alt: 'Workflow Creator Logo',
+        alt: 'Claude Code Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -124,7 +129,7 @@ const config: Config = {
           ],
         },
         {
-          href: 'https://github.com/your-org/workflow-creator',
+          href: 'https://github.com/anthropics/claude-code',
           label: 'GitHub',
           position: 'right',
         },
@@ -172,7 +177,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/your-org/workflow-creator',
+              href: 'https://github.com/anthropics/claude-code',
             },
             {
               label: 'Issues',
@@ -181,11 +186,11 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Workflow Creator Project. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Claude Code Project. Built with Docusaurus.`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      theme: prismThemes.vsDark,
+      darkTheme: prismThemes.vsDark,
     },
   } satisfies Preset.ThemeConfig,
 };
