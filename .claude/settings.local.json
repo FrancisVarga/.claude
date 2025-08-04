@@ -8,7 +8,9 @@
       "Bash(claude mcp:*)",
       "mcp__memory__create_entities",
       "mcp__memory__create_relations",
-      "mcp__memory__read_graph"
+      "mcp__memory__read_graph",
+      "Bash(npm run build:*)",
+      "Bash(npm run serve:*)"
     ],
     "deny": []
   },
