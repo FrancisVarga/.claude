@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wsl:*)",
+      "Bash(copy:*)",
+      "Bash(cmd /c copy:*)",
+      "Bash(if not exist \"G:\\My Drive\\GDriveBackup\" mkdir \"G:\\My Drive\\GDriveBackup\")",
+      "Bash(cmd:*)",
+      "Bash(powershell:*)",
+      "WebFetch",
+      "Bash(ls:*)",
+      "Bash(git:*)",
+      "Bash(*:*)",
+      "MultiEdit",
+      "Edit",
+      "Write",
+      "WebSearch",
+      "Bash"
+    ],
+    "deny": []
+  }
+}

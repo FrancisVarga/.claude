@@ -1,0 +1,58 @@
+{
+  "commands": {
+    "auto_update": false,
+    "enabled": true,
+    "version": "3.0.0"
+  },
+  "components": {
+    "commands": {
+      "category": "commands",
+      "files_count": 17,
+      "installed_at": "2025-08-16T05:19:49.141044",
+      "version": "3.0.0"
+    },
+    "core": {
+      "category": "core",
+      "files_count": 9,
+      "installed_at": "2025-08-16T05:19:49.080082",
+      "version": "3.0.0"
+    },
+    "hooks": {
+      "files_count": 0,
+      "installed": true,
+      "status": "placeholder",
+      "version": "3.0.0"
+    },
+    "mcp": {
+      "category": "integration",
+      "installed_at": "2025-08-16T05:21:52.445787",
+      "servers_count": 4,
+      "version": "3.0.0"
+    }
+  },
+  "framework": {
+    "components": [
+      "core"
+    ],
+    "description": "AI-enhanced development framework for Claude Code",
+    "installation_type": "global",
+    "name": "SuperClaude",
+    "version": "3.0.0"
+  },
+  "mcp": {
+    "auto_update": false,
+    "enabled": true,
+    "servers": [
+      "sequential-thinking",
+      "context7",
+      "magic",
+      "playwright"
+    ]
+  },
+  "superclaude": {
+    "auto_update": false,
+    "enabled": true,
+    "profile": "default",
+    "version": "3.0.0"
+  }
+}
