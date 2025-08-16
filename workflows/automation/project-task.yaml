@@ -1,0 +1,496 @@
+---
+command: "project-task"
+category: "Project Management & Orchestration"
+purpose: "Intelligent orchestration of parallel sub-agents for comprehensive project task execution"
+wave-enabled: true
+performance-profile: "complex"
+complexity-threshold: 0.8
+allowed-tools: [Task, TodoWrite, Read, Grep, Glob, Edit, MultiEdit, Write, mcp__sequential-thinking__sequentialthinking]
+personas: [architect, analyzer, project-manager, performance]
+mcp-servers: [sequential, context7, magic, playwright]
+auto-flags: ["--delegate", "--parallel", "--validate"]
+---
+
+# Project Task Orchestration Workflow
+
+Comprehensive workflow for intelligent orchestration of parallel sub-agents to handle any project task through automated coordination, parallel execution, and result aggregation.
+
+## Overview
+
+This workflow analyzes any project task input and automatically:
+- Identifies task characteristics, complexity, and domain requirements
+- Selects optimal combination of specialized sub-agents
+- Orchestrates parallel execution with dependency management
+- Aggregates results with quality validation
+- Provides comprehensive progress tracking and error recovery
+
+## Input Schema
+
+```yaml
+task_input:
+  description: string (10-1000 characters)
+  priority: enum [low, medium, high] (optional)
+  deadline: string (optional)
+  context: object (optional)
+  constraints: array (optional)
+  expected_outputs: array (optional)
+```
+
+## Sub-Agent Ecosystem
+
+### Available Sub-Agents
+- **mastra-tools-specialist**: Tool creation, MCP server integration, framework development
+- **typescript-pro**: Advanced TypeScript patterns, type safety, language optimization
+- **test-automator**: Testing strategies, QA automation, validation frameworks
+- **backend-architect**: API design, system architecture, server-side development
+- **frontend-developer**: UI components, user interfaces, client-side development
+- **security-auditor**: Security compliance, vulnerability assessment, threat analysis
+- **performance-engineer**: Performance optimization, bottleneck analysis, scalability
+- **error-detective**: Debugging, error pattern analysis, issue resolution
+- **code-reviewer**: Quality review, best practices, code standards
+- **architect-reviewer**: System design validation, architectural assessment
+
+### Sub-Agent Selection Matrix
+
+```yaml
+task_types:
+  development:
+    primary: [typescript-pro, backend-architect, frontend-developer]
+    secondary: [test-automator, code-reviewer]
+    
+  integration:
+    primary: [mastra-tools-specialist, typescript-pro]
+    secondary: [security-auditor, performance-engineer]
+    
+  quality_assurance:
+    primary: [test-automator, code-reviewer, security-auditor]
+    secondary: [performance-engineer, error-detective]
+    
+  performance_optimization:
+    primary: [performance-engineer, architect-reviewer]
+    secondary: [backend-architect, code-reviewer]
+    
+  debugging:
+    primary: [error-detective, test-automator]
+    secondary: [typescript-pro, code-reviewer]
+    
+  architecture:
+    primary: [backend-architect, architect-reviewer]
+    secondary: [security-auditor, performance-engineer]
+    
+  security:
+    primary: [security-auditor, backend-architect]
+    secondary: [code-reviewer, test-automator]
+```
+
+## Workflow Execution Phases
+
+### Phase 1: Intelligent Task Analysis
+
+**Step 1: Parse and Analyze Task**
+```yaml
+step: analyze_task
+tool: mcp__sequential-thinking__sequentialthinking
+input: $ARGUMENT
+analysis_depth: comprehensive
+```
+
+Use Sequential thinking to:
+- Parse task description and extract key characteristics
+- Identify primary domain (development, integration, quality, performance, etc.)
+- Assess complexity level (simple: 0.0-0.3, moderate: 0.3-0.7, complex: 0.7-1.0)
+- Determine required skill sets and expertise areas
+- Identify potential dependencies and constraints
+- Estimate resource requirements and timeline
+
+**Output**: Task analysis report with domain classification, complexity score, and requirements matrix
+
+**Step 2: Sub-Agent Selection**
+```yaml
+step: select_agents
+tool: Task
+logic: dynamic_selection
+max_agents: 5
+```
+
+Selection algorithm:
+1. Map task characteristics to sub-agent capabilities
+2. Score each sub-agent based on relevance (0.0-1.0)
+3. Select 2-5 highest scoring agents ensuring domain coverage
+4. Validate no conflicting specializations
+5. Optimize for parallel execution potential
+
+**Output**: Selected sub-agents with role assignments and execution order
+
+### Phase 2: Execution Planning and Coordination
+
+**Step 3: Create Execution Plan**
+```yaml
+step: create_execution_plan  
+tool: TodoWrite
+coordination: parallel_with_dependencies
+```
+
+Planning process:
+1. Map dependencies between sub-agent tasks
+2. Identify parallel execution opportunities
+3. Create execution timeline with milestones
+4. Define quality gates and validation checkpoints
+5. Establish communication protocols between agents
+6. Plan result aggregation strategy
+
+**Output**: Comprehensive execution plan with dependency graph and timeline
+
+**Step 4: Initialize Progress Tracking**
+```yaml
+step: initialize_tracking
+tool: TodoWrite
+monitoring: real_time
+```
+
+Setup:
+- Create task hierarchy for each sub-agent
+- Establish progress tracking mechanisms
+- Configure error monitoring and alerting
+- Initialize result collection framework
+- Setup communication channels between agents
+
+### Phase 3: Parallel Sub-Agent Orchestration
+
+**Step 5: Execute Parallel Sub-Agents**
+```yaml
+step: orchestrate_parallel
+tool: Task
+execution_mode: parallel_with_coordination
+error_handling: graceful_degradation
+```
+
+Execution strategy:
+1. **Parallel Initialization**: Start all selected sub-agents simultaneously
+2. **Task Delegation**: Distribute work based on specialization and capacity
+3. **Progress Monitoring**: Real-time tracking of each sub-agent's progress
+4. **Coordination**: Manage dependencies and shared resources
+5. **Error Recovery**: Handle failures with fallback strategies
+6. **Quality Gates**: Continuous validation throughout execution
+
+**Sub-Agent Coordination Pattern**:
+```yaml
+mastra-tools-specialist:
+  role: "Tool integration and MCP server development for: $ARGUMENT"
+  context: "Focus on creating robust tools and integration patterns"
+  parallel_compatible: true
+  dependencies: []
+
+typescript-pro:  
+  role: "TypeScript optimization and type safety for: $ARGUMENT"
+  context: "Ensure advanced TypeScript patterns and performance"
+  parallel_compatible: true
+  dependencies: [mastra-tools-specialist]
+
+backend-architect:
+  role: "Backend architecture and API design for: $ARGUMENT" 
+  context: "Design scalable backend systems and data models"
+  parallel_compatible: true
+  dependencies: []
+
+frontend-developer:
+  role: "Frontend implementation and UI components for: $ARGUMENT"
+  context: "Create user-facing interfaces and client-side logic"
+  parallel_compatible: true
+  dependencies: [backend-architect]
+
+test-automator:
+  role: "Comprehensive testing strategy for: $ARGUMENT"
+  context: "Develop testing frameworks and quality assurance"
+  parallel_compatible: false
+  dependencies: [typescript-pro, backend-architect, frontend-developer]
+
+security-auditor:
+  role: "Security analysis and compliance audit for: $ARGUMENT"
+  context: "Ensure security best practices and vulnerability assessment"
+  parallel_compatible: true
+  dependencies: [backend-architect]
+
+performance-engineer:
+  role: "Performance optimization and bottleneck analysis for: $ARGUMENT"
+  context: "Optimize performance across all system components"
+  parallel_compatible: false
+  dependencies: [typescript-pro, backend-architect, frontend-developer]
+
+code-reviewer:
+  role: "Code quality review and best practices for: $ARGUMENT"
+  context: "Ensure code quality standards and maintainability"
+  parallel_compatible: false
+  dependencies: [typescript-pro, backend-architect, frontend-developer]
+
+architect-reviewer:
+  role: "System architecture validation for: $ARGUMENT"
+  context: "Review and validate overall system design"
+  parallel_compatible: false
+  dependencies: [backend-architect, security-auditor, performance-engineer]
+
+error-detective:
+  role: "Debug analysis and error resolution for: $ARGUMENT"
+  context: "Identify and resolve issues across all components"
+  parallel_compatible: true
+  dependencies: [code-reviewer]
+```
+
+### Phase 4: Real-Time Coordination and Monitoring
+
+**Step 6: Monitor and Coordinate**
+```yaml
+step: monitor_coordinate
+tool: TodoWrite
+frequency: continuous
+validation_gates: enabled
+```
+
+Monitoring activities:
+- Track progress of each sub-agent in real-time
+- Validate intermediate outputs against quality criteria
+- Coordinate shared resources and dependencies
+- Handle conflicts and resource contention
+- Adjust execution plan based on progress and issues
+- Maintain communication between dependent sub-agents
+
+**Error Handling Strategy**:
+```yaml
+error_recovery:
+  timeout_handling: extend_deadline_or_fallback
+  agent_failure: reassign_to_backup_agent
+  dependency_conflict: sequential_execution_fallback
+  resource_exhaustion: priority_based_queuing
+  quality_gate_failure: iterative_improvement_cycle
+```
+
+### Phase 5: Result Aggregation and Validation
+
+**Step 7: Aggregate Sub-Agent Results**
+```yaml
+step: aggregate_results
+tool: Task
+aggregation_strategy: intelligent_synthesis
+validation: comprehensive
+```
+
+Aggregation process:
+1. **Collection**: Gather outputs from all completed sub-agents
+2. **Validation**: Verify consistency and completeness across results
+3. **Integration**: Merge related outputs and resolve conflicts
+4. **Synthesis**: Create coherent combined solution
+5. **Quality Check**: Apply final quality gates and validation
+6. **Documentation**: Generate comprehensive result documentation
+
+**Result Synthesis Logic**:
+- Code components: Integrate following dependency order
+- Architecture decisions: Validate consistency across agents
+- Quality recommendations: Prioritize by impact and feasibility
+- Performance optimizations: Ensure no conflicting approaches
+- Security measures: Validate comprehensive coverage
+- Testing strategies: Integrate into unified test framework
+
+### Phase 6: Final Output Generation
+
+**Step 8: Generate Final Output**
+```yaml
+step: finalize_output
+tool: Write
+format: comprehensive_report
+quality_gates: all_enabled
+```
+
+Final output includes:
+1. **Executive Summary**: High-level overview of task completion
+2. **Detailed Results**: Comprehensive solutions from each sub-agent
+3. **Integration Guide**: Instructions for implementing the solutions
+4. **Quality Metrics**: Performance, security, and quality assessments
+5. **Recommendations**: Next steps and optimization opportunities
+6. **Documentation**: Complete technical documentation
+7. **Testing Strategy**: Comprehensive testing and validation plan
+8. **Performance Metrics**: Execution time, resource usage, success rate
+
+## Advanced Features
+
+### Intelligent Sub-Agent Selection
+
+**Dynamic Selection Algorithm**:
+```yaml
+selection_criteria:
+  task_relevance: 0.40    # How well agent matches task requirements
+  expertise_depth: 0.25   # Agent's specialization depth in required area
+  parallel_compatibility: 0.20  # Ability to work effectively in parallel
+  resource_efficiency: 0.10     # Resource usage optimization
+  success_history: 0.05          # Historical success rate for similar tasks
+```
+
+### Quality Gates and Validation
+
+**Continuous Quality Assessment**:
+- **Phase Gates**: Validation checkpoints between each phase
+- **Agent Gates**: Quality validation for each sub-agent output
+- **Integration Gates**: Consistency validation during result aggregation
+- **Final Gates**: Comprehensive quality assessment before output
+
+**Quality Metrics**:
+```yaml
+quality_thresholds:
+  code_quality_score: 0.85
+  security_compliance: 0.95
+  performance_benchmark: 0.80
+  test_coverage: 0.90
+  documentation_completeness: 0.85
+```
+
+### Error Recovery and Resilience
+
+**Multi-Level Error Handling**:
+1. **Agent-Level**: Individual sub-agent error recovery
+2. **Coordination-Level**: Dependency and resource conflict resolution
+3. **System-Level**: Graceful degradation and fallback strategies
+4. **Quality-Level**: Iterative improvement for quality gate failures
+
+### Performance Optimization
+
+**Execution Efficiency**:
+- **Parallel Processing**: Maximum parallelization of independent tasks
+- **Resource Pooling**: Shared resource utilization across sub-agents
+- **Caching**: Reuse of analysis results and common operations
+- **Load Balancing**: Optimal distribution of work across available resources
+
+**Performance Targets**:
+```yaml
+performance_goals:
+  task_analysis: <5 seconds
+  agent_selection: <2 seconds
+  parallel_orchestration: variable (optimized for throughput)
+  result_aggregation: <10 seconds
+  total_overhead: <20 seconds base + variable execution time
+```
+
+## Integration with Mastra Ecosystem
+
+### MCP Server Coordination
+
+**Sequential Integration**:
+- Complex task analysis and multi-step reasoning
+- Dependency resolution and execution planning
+- Result synthesis and quality validation
+
+**Context7 Integration**:
+- Framework patterns and best practices lookup
+- Library documentation and implementation guides
+- Industry standards and compliance requirements
+
+**Magic Integration**:
+- UI component generation and design system creation
+- Frontend optimization and responsive design
+- Accessibility compliance and user experience
+
+**Playwright Integration**:
+- End-to-end testing and validation
+- Performance monitoring and benchmarking
+- User workflow testing and optimization
+
+### Framework Integration
+
+**TypeScript Integration**:
+```typescript
+// Input validation schema
+const projectTaskInputSchema = z.object({
+  task: z.string().min(10).max(1000),
+  priority: z.enum(['low', 'medium', 'high']).optional(),
+  deadline: z.string().optional(),
+  context: z.record(z.any()).optional(),
+  constraints: z.array(z.string()).optional(),
+  expectedOutputs: z.array(z.string()).optional()
+})
+
+// Sub-agent coordination interface
+interface SubAgentCoordination {
+  agentType: string
+  role: string
+  context: string
+  parallelCompatible: boolean
+  dependencies: string[]
+  estimatedDuration: number
+  resourceRequirements: ResourceRequirements
+}
+
+// Result aggregation interface
+interface AggregatedResult {
+  executiveSummary: string
+  detailedResults: Record<string, AgentResult>
+  integrationGuide: string
+  qualityMetrics: QualityMetrics
+  recommendations: string[]
+  documentation: string
+  testingStrategy: string
+  performanceMetrics: PerformanceMetrics
+}
+```
+
+## Usage Examples
+
+### Software Development Task
+```yaml
+input: "Implement user authentication system with OAuth2, JWT tokens, and role-based access control"
+
+selected_agents:
+  - security-auditor: OAuth2 security implementation
+  - backend-architect: Authentication API design
+  - typescript-pro: Type-safe token handling
+  - test-automator: Authentication testing strategy
+  - code-reviewer: Security code review
+```
+
+### Integration Task
+```yaml
+input: "Create MCP server for external API integration with rate limiting and caching"
+
+selected_agents:
+  - mastra-tools-specialist: MCP server development
+  - typescript-pro: Type-safe integration patterns
+  - performance-engineer: Rate limiting and caching optimization
+  - security-auditor: API security assessment
+  - test-automator: Integration testing framework
+```
+
+### Quality Improvement Task
+```yaml
+input: "Improve code quality and performance across existing TypeScript codebase"
+
+selected_agents:
+  - code-reviewer: Code quality assessment
+  - performance-engineer: Performance bottleneck analysis
+  - typescript-pro: TypeScript optimization
+  - test-automator: Test coverage improvement
+  - architect-reviewer: Architectural improvements
+```
+
+## Success Metrics
+
+### Execution Performance
+- **Task Analysis Time**: <5 seconds for comprehensive analysis
+- **Agent Selection Time**: <2 seconds for optimal selection
+- **Parallel Execution**: 60-80% time savings vs sequential execution
+- **Result Aggregation**: <10 seconds for complete synthesis
+- **Overall Efficiency**: >90% successful task completion rate
+
+### Quality Metrics
+- **Code Quality**: >85% quality score across all outputs
+- **Security Compliance**: >95% security standard adherence
+- **Performance**: >80% performance benchmark achievement
+- **Test Coverage**: >90% test coverage for generated code
+- **Documentation**: >85% documentation completeness
+
+### Intelligence Metrics
+- **Sub-Agent Selection Accuracy**: >90% optimal selection rate
+- **Dependency Resolution**: >95% successful coordination
+- **Error Recovery**: >85% successful error recovery rate
+- **Quality Gate Success**: >90% quality validation pass rate
+- **User Satisfaction**: >85% task completion satisfaction
+
+## Project Task: $ARGUMENT
+
+**Instructions**: This workflow will analyze your task, select optimal sub-agents, orchestrate parallel execution, and deliver comprehensive results with quality validation and detailed documentation.
