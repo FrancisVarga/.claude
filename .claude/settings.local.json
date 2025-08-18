@@ -11,7 +11,8 @@
       "mcp__memory__read_graph",
       "Bash(npm run build:*)",
       "Bash(npm run serve:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(git rebase:*)"
     ],
     "deny": []
   },
